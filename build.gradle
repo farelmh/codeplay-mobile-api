@@ -2,7 +2,6 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.4.11'
 	id 'io.spring.dependency-management' version '1.1.7'
-	// 1. TAMBAHKAN PLUGIN LOMBOK
     id 'org.graalvm.buildtools.native' version '0.10.2'
 }
 
@@ -44,4 +43,9 @@ jar {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+// Wajib ada di build.gradle untuk menonaktifkan AOT Test
+tasks.named('processTestAot') {
+    enabled = false
 }
