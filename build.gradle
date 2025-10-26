@@ -39,7 +39,7 @@ dependencies {
 bootJar {
     enabled = true
     archiveFileName = "app.jar"
-	mainClassName = 'com.example.mobileapi.MobileapiApplication'
+	mainClass = 'com.example.mobileapi.MobileapiApplication'
 }
 
 tasks.named('test') {
