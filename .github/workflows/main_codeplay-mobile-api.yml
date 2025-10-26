@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v4
       
       # ----------------------------------------------------
-      # START: Perubahan untuk Gradle
+      # START: Gradle Build Setup
       # ----------------------------------------------------
       - name: Set up Java version
         uses: actions/setup-java@v4
@@ -27,24 +27,23 @@ jobs:
           java-version: '21'
           distribution: 'microsoft'
 
-      # Langkah baru: Menjadikan Gradle wrapper executable
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      # Langkah baru: Build dengan Gradle
       - name: Build with Gradle
         run: ./gradlew build
         
       # ----------------------------------------------------
-      # END: Perubahan untuk Gradle
+      # END: Gradle Build Setup
       # ----------------------------------------------------
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: java-app
-          # PENTING: Mengubah path dari target/ (Maven) menjadi build/libs/ (Gradle)
-          path: '${{ github.workspace }}/build/libs/*.jar' 
+          # SOLUSI BARU: Memastikan HANYA JAR UTAMA yang diupload.
+          # Pola ini mengabaikan JAR dengan akhiran '-plain'.
+          path: '${{ github.workspace }}/build/libs/!(*plain).jar' 
 
   deploy:
     runs-on: ubuntu-latest
@@ -72,5 +71,6 @@ jobs:
         with:
           app-name: 'codeplay-mobile-api'
           slot-name: 'Production'
-          package: '*.jar'
-
+          # Mengubah pola kembali ke yang lebih sederhana '*.jar' 
+          # karena sekarang hanya satu file JAR yang didownload
+          package: '*.jar' 
