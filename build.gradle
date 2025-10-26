@@ -39,6 +39,7 @@ dependencies {
 bootJar {
     enabled = true
     archiveFileName = "app.jar"
+	mainClassName = 'com.example.mobileapi.MobileapiApplication'
 }
 
 tasks.named('test') {
@@ -49,3 +50,8 @@ tasks.named('test') {
 tasks.named('processTestAot') {
     enabled = false
 }
+
+tasks.named('bootJar') {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
