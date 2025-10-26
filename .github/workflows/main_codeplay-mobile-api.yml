@@ -17,21 +17,34 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
+      
+      # ----------------------------------------------------
+      # START: Perubahan untuk Gradle
+      # ----------------------------------------------------
       - name: Set up Java version
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'microsoft'
 
-      - name: Build with Maven
-        run: mvn clean install
+      # Langkah baru: Menjadikan Gradle wrapper executable
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      # Langkah baru: Build dengan Gradle
+      - name: Build with Gradle
+        run: ./gradlew build
+        
+      # ----------------------------------------------------
+      # END: Perubahan untuk Gradle
+      # ----------------------------------------------------
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: java-app
-          path: '${{ github.workspace }}/target/*.jar'
+          # PENTING: Mengubah path dari target/ (Maven) menjadi build/libs/ (Gradle)
+          path: '${{ github.workspace }}/build/libs/*.jar' 
 
   deploy:
     runs-on: ubuntu-latest
@@ -39,13 +52,13 @@ jobs:
     permissions:
       id-token: write #This is required for requesting the JWT
       contents: read #This is required for actions/checkout
-  
+    
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: java-app
-      
+          
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -60,4 +73,3 @@ jobs:
           app-name: 'codeplay-mobile-api'
           slot-name: 'Production'
           package: '*.jar'
-          
