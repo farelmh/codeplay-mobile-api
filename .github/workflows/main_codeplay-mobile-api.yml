@@ -31,7 +31,8 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew build
+        # PENTING: Menambahkan --no-daemon untuk memastikan build selesai dengan bersih
+        run: ./gradlew build --no-daemon 
         
       # ----------------------------------------------------
       # END: Gradle Build Setup
@@ -41,9 +42,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: java-app
-          # SOLUSI BARU: Memastikan HANYA JAR UTAMA yang diupload.
-          # Pola ini mengabaikan JAR dengan akhiran '-plain'.
-          path: '${{ github.workspace }}/build/libs/!(*plain).jar' 
+          # PERBAIKAN: Menggunakan pola yang hanya menangkap JAR tanpa '-plain'.
+          # Kita mencari file JAR yang mengandung nama artifact dan tidak memiliki 'plain' di namanya.
+          path: '${{ github.workspace }}/build/libs/*-!(*plain).jar' 
 
   deploy:
     runs-on: ubuntu-latest
@@ -71,6 +72,5 @@ jobs:
         with:
           app-name: 'codeplay-mobile-api'
           slot-name: 'Production'
-          # Mengubah pola kembali ke yang lebih sederhana '*.jar' 
-          # karena sekarang hanya satu file JAR yang didownload
+          # Pola ini aman karena kita memastikan hanya satu file yang diupload.
           package: '*.jar' 
